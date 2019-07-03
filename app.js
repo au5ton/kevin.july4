@@ -65,9 +65,9 @@ const stamp = () => `[${new Date().toLocaleTimeString("en-US", {year: "numeric",
 
 // async function that updates the state of the Light
 const mutateColor = async (light, color) => {
-    light.hue        = color.hue        ? color.hue        : light.hue;
-    light.saturation = color.saturation ? color.saturation : light.saturation;
-    light.brightness = color.brightness ? color.brightness : light.brightness;
+    light.hue        = color.hue !== undefined        ? color.hue        : light.hue;
+    light.saturation = color.saturation !== undefined ? color.saturation : light.saturation;
+    light.brightness = color.brightness !== undefined ? color.brightness : light.brightness;
     light.transitionTime = TRANSITION_TIME;
     return client.lights.save(light);
 }
@@ -87,8 +87,8 @@ const sleep = async (ms) => {
 // Color cycle
 const cycle = [
     254,
-    200,
-    230
+    130,
+    170
 ];
 
 console.log(`${stamp()} Starting...`)
@@ -115,10 +115,10 @@ let client = new huejay.Client({
         if(! (i < cycle.length)) i = 0; 
         
         console.log(`${stamp()} Changing colors`)
-        console.log(`\tindex: \t${i}`)
-        console.log(`\tcycle[i]: \t${cycle[i]}`)
-        console.log(`\tpre: \t${pre}`)
-        console.log(`\tprepre: \t${prepre}`)
+        console.log(`\tindex:    ${i}`)
+        console.log(`\tcycle[i]: ${cycle[i]}`)
+        console.log(`\tpre:      ${pre}`)
+        console.log(`\tprepre:   ${prepre}`)
 
         // Save promises
         x = mutateColor(one, { brightness: cycle[i] })
