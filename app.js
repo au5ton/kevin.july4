@@ -63,18 +63,11 @@ const TRANSITION_TIME = parseInt(process.env.TRANSITION_TIME_DS);
 
 const stamp = () => `[${new Date().toLocaleTimeString("en-US", {year: "numeric", month: "short", day: "2-digit"})}]`
 
-// Color cycle
-const cycle = [
-    color(...USA_RED),
-    color(...USA_WHITE),
-    color(...USA_BLUE)
-];
-
 // async function that updates the state of the Light
 const mutateColor = async (light, color) => {
-    light.hue        = color.hue;
-    light.saturation = color.saturation;
-    light.brightness = color.brightness;
+    light.hue        = color.hue        ? color.hue        : light.hue;
+    light.saturation = color.saturation ? color.saturation : light.saturation;
+    light.brightness = color.brightness ? color.brightness : light.brightness;
     light.transitionTime = TRANSITION_TIME;
     return client.lights.save(light);
 }
@@ -91,6 +84,13 @@ const sleep = async (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Color cycle
+const cycle = [
+    254,
+    200,
+    230
+];
+
 console.log(`${stamp()} Starting...`)
 
 let client = new huejay.Client({
@@ -104,17 +104,26 @@ let client = new huejay.Client({
     let two   = await client.lights.getById(LIGHT_2);
     let three = await client.lights.getById(LIGHT_3);
 
-    let pre = color(0,0,0);
-    let prepre = color(0,0,0);
+    await mutateColor(one,   color(...USA_RED))
+    await mutateColor(two,   color(...USA_WHITE))
+    await mutateColor(three, color(...USA_BLUE))
+
+    let pre = 0;
+    let prepre = 0;
 
     for(let i = 0; ; i++) {
         if(! (i < cycle.length)) i = 0; 
         
-		console.log(`${stamp()} Changing colors`)
+        console.log(`${stamp()} Changing colors`)
+        console.log(`\tindex: ${i}`)
+        console.log(`\tcycle[i]: ${cycle[i]}`)
+        console.log(`\tpre: ${pre}`)
+        console.log(`\tprepre: ${prepre}`)
+        
         // Save promises
-        x = mutateColor(one, cycle[i])
-        y = mutateColor(two, pre)
-        z = mutateColor(three, prepre);
+        x = mutateColor(one, { brightness: cycle[i] })
+        y = mutateColor(two, { brightness: pre })
+        z = mutateColor(three, { brightness: prepre });
 
         // Perform color change simultaneously
         await Promise.all([x, y, z])
@@ -125,8 +134,12 @@ let client = new huejay.Client({
         await sleep(ITERATION_DELAY);
         
         // Minimize object spawns
-        copyColor(prepre, pre)
-        copyColor(pre, cycle[i])
+        //copyColor(prepre, pre)
+        //copyColor(pre, cycle[i])
+        prepre = pre;
+        pre = cycle[i];
+
+        
         // cycle[i] will change next iteration
     }
 })()
