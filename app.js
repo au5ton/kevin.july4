@@ -114,7 +114,7 @@ let client = new huejay.Client({
     for(let i = 0; ; i++) {
         if(! (i < cycle.length)) i = 0; 
         
-        console.log(`${stamp()} Changing colors`)
+        console.log(`${stamp()} Changing colors (transition: ${TRANSITION_TIME}s)`)
         console.log(`\tindex:    ${i}`)
         console.log(`\tcycle[i]: ${cycle[i]}`)
         console.log(`\tpre:      ${pre}`)
@@ -128,7 +128,7 @@ let client = new huejay.Client({
         // Perform color change simultaneously
         await Promise.all([x, y, z])
 		
-		console.log(`${stamp()} Sleeping`)
+		console.log(`${stamp()} Sleeping (${ITERATION_DELAY}ms)`)
 
         // Wait for changing the colors again
         await sleep(ITERATION_DELAY);
