@@ -61,6 +61,8 @@ const USA_BLUE  = process.env.USA_BLUE.split(',').map(e => parseInt(e))
 const ITERATION_DELAY = parseInt(process.env.ITERATION_DELAY_MS);
 const TRANSITION_TIME = parseInt(process.env.TRANSITION_TIME_DS);
 
+const stamp = () => `[${new Date().toLocaleTimeString("en-US", {year: "numeric", month: "short", day: "2-digit"})}]`
+
 // Color cycle
 const cycle = [
     color(...USA_RED),
@@ -89,6 +91,8 @@ const sleep = async (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+console.log(`${stamp()} Starting...`)
+
 let client = new huejay.Client({
     host:     process.env.HUE_HOST,
     username: process.env.HUE_USER,
@@ -106,6 +110,7 @@ let client = new huejay.Client({
     for(let i = 0; ; i++) {
         if(! (i < cycle.length)) i = 0; 
         
+		console.log(`${stamp()} Changing colors`)
         // Save promises
         x = mutateColor(one, cycle[i])
         y = mutateColor(two, pre)
@@ -113,6 +118,8 @@ let client = new huejay.Client({
 
         // Perform color change simultaneously
         await Promise.all([x, y, z])
+		
+		console.log(`${stamp()} Sleeping`)
 
         // Wait for changing the colors again
         await sleep(ITERATION_DELAY);
