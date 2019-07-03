@@ -115,11 +115,11 @@ let client = new huejay.Client({
         if(! (i < cycle.length)) i = 0; 
         
         console.log(`${stamp()} Changing colors`)
-        console.log(`\tindex: ${i}`)
-        console.log(`\tcycle[i]: ${cycle[i]}`)
-        console.log(`\tpre: ${pre}`)
-        console.log(`\tprepre: ${prepre}`)
-        
+        console.log(`\tindex: \t${i}`)
+        console.log(`\tcycle[i]: \t${cycle[i]}`)
+        console.log(`\tpre: \t${pre}`)
+        console.log(`\tprepre: \t${prepre}`)
+
         // Save promises
         x = mutateColor(one, { brightness: cycle[i] })
         y = mutateColor(two, { brightness: pre })
